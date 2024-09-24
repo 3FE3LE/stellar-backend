@@ -1,0 +1,29 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Room {
+  id             Int      @id @default(autoincrement())
+  roomType       String
+  numberOfBeds   Int
+  maxOccupancy   Int
+  oceanView      Boolean
+  pricePerNight  Float
+  available      Boolean
+  reservations   Reservation[]
+}
+
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  checkInDate DateTime
+  checkOutDate DateTime
+  guests      Int
+  room        Room     @relation(fields: [roomId], references: [id])
+  roomId      Int
+}
