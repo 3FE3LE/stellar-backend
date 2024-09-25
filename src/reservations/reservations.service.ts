@@ -1,6 +1,7 @@
+import { calculateTotalPrice } from 'src/helpers';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -9,60 +10,94 @@ import { UpdateReservationDto } from './dto/update-reservation.dto';
 export class ReservationsService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createReservationDto: CreateReservationDto) {
-    const { checkInDate, checkOutDate, guests, roomId } = createReservationDto;
+    const { checkIn, checkOut, guests, roomId } = createReservationDto;
 
-    // Verificar si la habitación está disponible
-    const room = await this.prisma.room.findFirst({
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+
+    // Verificar si la habitación existe y tiene suficiente capacidad
+    const room = await this.prisma.room.findUnique({
+      where: { id: roomId },
+      include: { reservations: true },
+    });
+
+    if (!room) {
+      throw new NotFoundException('La habitación no existe');
+    }
+
+    if (room.maxOccupancy < guests) {
+      throw new Error(
+        'El número de huéspedes excede la capacidad máxima de la habitación',
+      );
+    }
+
+    // Calcular el porcentaje de disponibilidad de la habitación
+    const totalRooms = await this.prisma.room.count({
+      where: { type: room.type },
+    });
+    const reservedRooms = await this.prisma.room.count({
       where: {
-        id: roomId,
-        available: true,
-        maxOccupancy: {
-          gte: guests,
-        },
+        type: room.type,
         reservations: {
-          none: {
-            OR: [
-              {
-                checkInDate: {
-                  lte: new Date(checkOutDate),
-                },
-                checkOutDate: {
-                  gte: new Date(checkInDate),
-                },
-              },
-            ],
+          some: {
+            checkIn: { lt: checkOut },
+            checkOut: { gt: checkIn },
           },
         },
       },
     });
 
-    if (!room) {
-      throw new Error('Room is not available for the selected dates');
-    }
-    // Crear reserva
-    return this.prisma.reservation.create({
+    const availabilityPercentage =
+      ((totalRooms - reservedRooms) / totalRooms) * 100;
+
+    // Calcular el precio dinámico
+    const totalPrice = calculateTotalPrice(
+      room.basePrice,
+      checkInDate,
+      checkOutDate,
+      availabilityPercentage,
+    );
+
+    // Crear la reserva
+    const newReservation = await this.prisma.reservation.create({
       data: {
-        checkInDate: new Date(checkInDate),
-        checkOutDate: new Date(checkOutDate),
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
         guests,
         roomId,
+        totalPrice,
+      },
+    });
+
+    return newReservation;
+  }
+
+  findAll() {
+    return this.prisma.reservation.findMany();
+  }
+
+  findOne(id: number) {
+    return this.prisma.reservation.findUnique({
+      where: {
+        id,
       },
     });
   }
 
-  findAll() {
-    return `This action returns all reservations`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
-  }
-
   update(id: number, updateReservationDto: UpdateReservationDto) {
-    return `This action updates a #${id} reservation`;
+    return this.prisma.reservation.update({
+      where: {
+        id,
+      },
+      data: updateReservationDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} reservation`;
+    return this.prisma.reservation.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

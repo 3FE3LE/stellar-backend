@@ -13,28 +13,32 @@ export class RoomsService {
   async findAvailableRooms(searchRoomsDto: SearchRoomsDto) {
     const { checkInDate, checkOutDate, guests, roomType } = searchRoomsDto;
 
-    // Obtener todas las habitaciones que no están reservadas en el rango de fechas proporcionado
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
     const availableRooms = await this.prisma.room.findMany({
       where: {
-        available: true,
+        // Filtra habitaciones que tengan la capacidad suficiente para los huéspedes
         maxOccupancy: {
-          gte: guests, // Asegurar que la habitación pueda acomodar el número de huéspedes
+          gte: guests,
         },
+        // Filtra por tipo de habitación, si se proporciona
+        type: roomType ? roomType : undefined,
+        // Excluye habitaciones que ya están reservadas en el período de fechas solicitado
         reservations: {
           none: {
             OR: [
               {
-                checkInDate: {
-                  lte: new Date(checkOutDate),
+                checkIn: {
+                  lt: checkOut, // El check-in de una reserva existente es antes del check-out solicitado
                 },
-                checkOutDate: {
-                  gte: new Date(checkInDate),
+                checkOut: {
+                  gt: checkIn, // El check-out de una reserva existente es después del check-in solicitado
                 },
               },
             ],
           },
         },
-        ...(roomType && { roomType }), // Filtrar por tipo de habitación opcionalmente
       },
       include: {
         reservations: true,
@@ -44,23 +48,71 @@ export class RoomsService {
     return availableRooms;
   }
 
-  create(createRoomDto: CreateRoomDto) {
-    return 'This action adds a new room';
+  //service to track how many rooms are in the hotel and how many are available,both overall and by room type.
+  async findHotelInfo() {
+    const totalRooms = await this.prisma.room.count();
+    const availableRooms = await this.prisma.room.count({
+      where: {
+        reservations: {
+          none: {},
+        },
+      },
+    });
+    const availableByType = await this.prisma.room.groupBy({
+      by: ['type'],
+      _count: {
+        type: true,
+      },
+      where: {
+        reservations: {
+          none: {},
+        },
+      },
+    });
+    return {
+      totalRooms,
+      availableRooms,
+      availableByType,
+    };
   }
 
-  findAll() {
-    return `This action returns all rooms`;
+  async create(createRoomDto: CreateRoomDto) {
+    return this.prisma.room.create({
+      data: createRoomDto,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} room`;
+  async findAll() {
+    return await this.prisma.room.findMany({
+      include: {
+        reservations: true,
+      },
+    });
+  }
+
+  async findOne(id: number) {
+    const room = await this.prisma.room.findFirst({
+      where: {
+        id,
+      },
+    });
+    return room;
   }
 
   update(id: number, updateRoomDto: UpdateRoomDto) {
-    return `This action updates a #${id} room`;
+    return this.prisma.room.update({
+      where: {
+        id,
+      },
+      data: updateRoomDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} room`;
+    return this.prisma.room.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
