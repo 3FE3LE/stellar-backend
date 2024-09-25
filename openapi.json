@@ -1,17 +1,6 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api": {
-      "get": {
-        "operationId": "AppController_getHello",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
     "/api/rooms": {
       "post": {
         "operationId": "RoomsController_create",
@@ -30,7 +19,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
       },
       "get": {
         "operationId": "RoomsController_findAll",
@@ -39,7 +31,67 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
+      }
+    },
+    "/api/rooms/available": {
+      "get": {
+        "operationId": "RoomsController_findAvailableRooms",
+        "summary": "Find available rooms",
+        "description": "Returns a list of available rooms based on search criteria",
+        "parameters": [
+          {
+            "name": "checkInDate",
+            "required": true,
+            "in": "query",
+            "description": "Check-in date (YYYY-MM-DD)",
+            "schema": {
+              "example": "2023-09-25",
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOutDate",
+            "required": true,
+            "in": "query",
+            "description": "Check-out date (YYYY-MM-DD)",
+            "schema": {
+              "example": "2023-09-30",
+              "type": "string"
+            }
+          },
+          {
+            "name": "guests",
+            "required": true,
+            "in": "query",
+            "description": "Number of guests",
+            "schema": {
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "roomType",
+            "required": false,
+            "in": "query",
+            "description": "Type of room",
+            "schema": {
+              "example": "standard",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available rooms"
+          }
+        },
+        "tags": [
+          "Rooms"
+        ]
       }
     },
     "/api/rooms/{id}": {
@@ -59,7 +111,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
       },
       "patch": {
         "operationId": "RoomsController_update",
@@ -87,7 +142,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
       },
       "delete": {
         "operationId": "RoomsController_remove",
@@ -105,7 +163,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Rooms"
+        ]
       }
     },
     "/api/reservations": {
@@ -126,7 +187,10 @@
           "201": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Reservations"
+        ]
       },
       "get": {
         "operationId": "ReservationsController_findAll",
@@ -135,7 +199,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Reservations"
+        ]
       }
     },
     "/api/reservations/{id}": {
@@ -155,7 +222,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Reservations"
+        ]
       },
       "patch": {
         "operationId": "ReservationsController_update",
@@ -183,7 +253,10 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Reservations"
+        ]
       },
       "delete": {
         "operationId": "ReservationsController_remove",
@@ -201,13 +274,16 @@
           "200": {
             "description": ""
           }
-        }
+        },
+        "tags": [
+          "Reservations"
+        ]
       }
     }
   },
   "info": {
-    "title": "17 Suit server",
-    "description": "17Suit API documentation",
+    "title": "Stellar Backend API",
+    "description": "Stellar Backend API documentation",
     "version": "1.0",
     "contact": {}
   },
@@ -217,7 +293,40 @@
     "schemas": {
       "CreateRoomDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Tipo de habitación (e.g. Junior Suite, King Suite, Presidential Suite)",
+            "example": "Junior Suite"
+          },
+          "beds": {
+            "type": "number",
+            "description": "Número de camas en la habitación",
+            "example": 2
+          },
+          "maxOccupancy": {
+            "type": "number",
+            "description": "Ocupación máxima de la habitación",
+            "example": 4
+          },
+          "oceanView": {
+            "type": "boolean",
+            "description": "Si la habitación tiene vista exterior/oceánica",
+            "example": true
+          },
+          "basePrice": {
+            "type": "number",
+            "description": "Precio base por noche en dólares",
+            "example": 60
+          }
+        },
+        "required": [
+          "type",
+          "beds",
+          "maxOccupancy",
+          "oceanView",
+          "basePrice"
+        ]
       },
       "UpdateRoomDto": {
         "type": "object",
@@ -225,7 +334,42 @@
       },
       "CreateReservationDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "checkIn": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Fecha de check-in de la reserva",
+            "example": "2024-09-25T00:00:00.000Z"
+          },
+          "checkOut": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Fecha de check-out de la reserva",
+            "example": "2024-09-28T00:00:00.000Z"
+          },
+          "guests": {
+            "type": "number",
+            "description": "Cantidad de huéspedes",
+            "example": 2
+          },
+          "roomId": {
+            "type": "number",
+            "description": "ID de la habitación a reservar",
+            "example": 1
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "Precio total de la reserva",
+            "example": 180
+          }
+        },
+        "required": [
+          "checkIn",
+          "checkOut",
+          "guests",
+          "roomId",
+          "totalPrice"
+        ]
       },
       "UpdateReservationDto": {
         "type": "object",

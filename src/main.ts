@@ -22,7 +22,7 @@ async function bootstrap() {
   fs.writeFileSync('openapi.json', JSON.stringify(appDocument, null, 2));
   SwaggerModule.setup(`${globalPrefix}/`, app, appDocument);
 
-  const allowedOrigins = ['http://localhost:3001'];
+  const allowedOrigins = ['http://localhost:3001', 'http://localhost:3000'];
 
   app.enableCors({
     origin: function (origin, callback) {
@@ -39,7 +39,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}/`,
   );
 }
 bootstrap();
