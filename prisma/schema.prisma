@@ -8,22 +8,28 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum RoomType {
+  JUNIOR
+  KING
+  PRESIDENTIAL
+}
+
 model Room {
-  id             Int      @id @default(autoincrement())
-  roomType       String
-  numberOfBeds   Int
-  maxOccupancy   Int
-  oceanView      Boolean
-  pricePerNight  Float
-  available      Boolean
-  reservations   Reservation[]
+  id           Int           @id @default(autoincrement())
+  type         RoomType
+  beds         Int
+  maxOccupancy Int
+  oceanView    Boolean       @default(false)
+  basePrice    Float
+  reservations Reservation[]
 }
 
 model Reservation {
-  id          Int      @id @default(autoincrement())
-  checkInDate DateTime
-  checkOutDate DateTime
-  guests      Int
-  room        Room     @relation(fields: [roomId], references: [id])
-  roomId      Int
+  id         Int      @id @default(autoincrement())
+  checkIn    DateTime
+  checkOut   DateTime
+  guests     Int
+  roomId     Int
+  totalPrice Float
+  room       Room     @relation(fields: [roomId], references: [id])
 }
