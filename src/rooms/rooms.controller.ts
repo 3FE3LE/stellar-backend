@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RoomType } from '@prisma/client';
 
 import { CreateRoomDto } from './dto/create-room.dto';
 import { SearchRoomsDto } from './dto/search-room.dto';
@@ -28,6 +29,17 @@ export class RoomsController {
   @Get()
   findAll() {
     return this.roomsService.findAll();
+  }
+
+  @Get('hotel')
+  @ApiOperation({
+    summary: 'Find hotel info',
+    description:
+      'Returns information about the hotel, including total rooms and available rooms',
+  })
+  @ApiResponse({ status: 200, description: 'Hotel information' })
+  findHotelInfo() {
+    return this.roomsService.findHotelInfo();
   }
 
   @Get('available')
@@ -56,7 +68,7 @@ export class RoomsController {
   @ApiQuery({
     name: 'roomType',
     required: false,
-    type: String,
+    enum: RoomType,
     description: 'Type of room',
   })
   @ApiResponse({ status: 200, description: 'List of available rooms' })
