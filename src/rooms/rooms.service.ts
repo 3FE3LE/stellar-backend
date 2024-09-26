@@ -20,7 +20,7 @@ export class RoomsService {
       where: {
         // Filtra habitaciones que tengan la capacidad suficiente para los huéspedes
         maxOccupancy: {
-          gte: guests,
+          gte: Number(guests),
         },
         // Filtra por tipo de habitación, si se proporciona
         type: roomType ? roomType : undefined,
