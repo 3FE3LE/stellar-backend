@@ -46,11 +46,11 @@ export class RoomsService {
       },
     });
     const totalRooms = await this.prisma.room.count({
-      where: { type: roomType },
+      where: { type: roomType ? roomType : undefined },
     });
     const reservedRooms = await this.prisma.room.count({
       where: {
-        type: roomType,
+        type: roomType ? roomType : undefined,
         reservations: {
           some: {
             checkIn: { lt: checkOut },
