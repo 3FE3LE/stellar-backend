@@ -73,7 +73,11 @@ export class ReservationsService {
   }
 
   findAll() {
-    return this.prisma.reservation.findMany();
+    return this.prisma.reservation.findMany({
+      include: {
+        room: true,
+      },
+    });
   }
 
   findOne(id: number) {
