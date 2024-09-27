@@ -1,5 +1,3 @@
-import { calculateTotalPrice } from 'src/helpers';
-
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
@@ -59,17 +57,7 @@ export class RoomsService {
         },
       },
     });
-    const availabilityPercentage =
-      ((totalRooms - reservedRooms) / totalRooms) * 100;
-
-    const priceIncrement = calculateTotalPrice(
-      1,
-      checkIn,
-      checkOut,
-      availabilityPercentage,
-    );
-
-    return { availableRooms, totalRooms, reservedRooms, priceIncrement };
+    return { availableRooms, totalRooms, reservedRooms };
   }
 
   async create(createRoomDto: CreateRoomDto) {

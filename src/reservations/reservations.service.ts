@@ -51,12 +51,12 @@ export class ReservationsService {
       ((totalRooms - reservedRooms) / totalRooms) * 100;
 
     // Calcular el precio dinámico
-    const totalPrice = calculateTotalPrice(
-      room.basePrice,
+    const totalPrice = calculateTotalPrice({
+      roomType: room.type,
       checkInDate,
       checkOutDate,
       availabilityPercentage,
-    );
+    });
 
     // Crear la reserva
     const newReservation = await this.prisma.reservation.create({
