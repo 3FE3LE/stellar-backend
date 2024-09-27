@@ -1,26 +1,45 @@
-# Usa una imagen base oficial de Node.js
-FROM node:20.15
+# Etapa 1: Construcción de la aplicación
+FROM node:18-alpine AS builder
 
-# Establece el directorio de trabajo
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia el archivo package.json y package-lock.json
+# Copiar los archivos package.json y package-lock.json
 COPY package*.json ./
 
-# Instala las dependencias del proyecto
-RUN npm install
+# Instalar las dependencias necesarias
+RUN npm install --legacy-peer-deps
 
-# Copia el resto del código de la aplicación
+# Copiar el resto de los archivos del proyecto
 COPY . .
 
-# Generacion del cliente de Prisma
+# Generar el archivo de cliente de Prisma
 RUN npx prisma generate
 
-# Construye la aplicación NestJS
+# Compilar la aplicación
 RUN npm run build
 
-# Expone el puerto que usará la aplicación
+# Etapa 2: Preparación de la imagen final
+FROM node:18-alpine
+
+# Establecer el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copiar las dependencias de la etapa de construcción
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copiar el código construido desde la etapa anterior
+COPY --from=builder /app/dist ./dist
+
+# Copiar los archivos necesarios de prisma (incluyendo el esquema)
+COPY --from=builder /app/prisma ./prisma
+
+# Copiar el archivo de OpenAPI generado
+COPY --from=builder /app/openapi.json ./openapi.json
+
+# Exponer el puerto en el que se ejecutará la aplicación (por defecto: 3000)
 EXPOSE 3000
 
-# Comando para ejecutar la aplicación
-CMD ["npm", "run", "start:prod"]
+# Comando de inicio para la aplicación
+CMD ["node", "dist/main"]
+
