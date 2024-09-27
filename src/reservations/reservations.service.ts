@@ -1,14 +1,14 @@
 import { calculateTotalPrice } from 'src/helpers';
-import { PrismaService } from 'src/prisma/prisma.service';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@Inject('PRISMA_CLIENT') private readonly prisma: PrismaClient) {}
   async create(createReservationDto: CreateReservationDto) {
     const { checkIn, checkOut, guests, roomId } = createReservationDto;
 
