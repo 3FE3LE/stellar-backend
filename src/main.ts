@@ -25,7 +25,8 @@ async function bootstrap() {
   const allowedOrigins = [
     'http://localhost:3001',
     'http://localhost:3000',
-    'https://stellar-frontend-ashy.vercel.app/',
+    'https://stellar-frontend-ashy.vercel.app',
+    'https://stellar-backend-production.up.railway.app',
   ];
 
   app.enableCors({
