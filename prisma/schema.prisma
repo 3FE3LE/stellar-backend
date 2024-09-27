@@ -31,5 +31,5 @@ model Reservation {
   guests     Int
   roomId     Int
   totalPrice Float
-  room       Room     @relation(fields: [roomId], references: [id])
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
