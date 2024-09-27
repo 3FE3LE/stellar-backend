@@ -22,7 +22,11 @@ async function bootstrap() {
   fs.writeFileSync('openapi.json', JSON.stringify(appDocument, null, 2));
   SwaggerModule.setup(`${globalPrefix}/`, app, appDocument);
 
-  const allowedOrigins = ['http://localhost:3001', 'http://localhost:3000'];
+  const allowedOrigins = [
+    'http://localhost:3001',
+    'http://localhost:3000',
+    'https://stellar-frontend-ashy.vercel.app/',
+  ];
 
   app.enableCors({
     origin: function (origin, callback) {
