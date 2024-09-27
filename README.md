@@ -1,85 +1,111 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Stellar Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este es el backend de la aplicación Stellar, desarrollado con NestJS y Prisma ORM. Proporciona una API REST para la búsqueda de habitaciones y la gestión de reservas, además de manejar precios dinámicos basados en varios factores.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+## Estructura del Proyecto
 
 ```bash
-$ npm install
+📁 stellar-backend
+    📁 prisma
+        📁 migrations           # Migraciones de Prisma
+        ─ schema.prisma         # Definición del esquema de la base de datos
+        ─ seed.ts               # Script para inicializar datos
+    📁 src
+        📁 helpers              # Funciones de ayuda
+        📁 prisma               # Módulo Prisma
+        📁 reservations         # Módulo de reservas
+            📁 dto              # DTOs de reservas
+        📁 rooms                # Módulo de habitaciones
+            📁 dto              # DTOs de habitaciones
+        ─ app.controller.ts     # Controlador principal
+        ─ app.module.ts         # Módulo raíz
+        ─ main.ts               # Punto de entrada
+    ─ .env                      # Variables de entorno
+    ─ openapi.json              # Archivo generado por Swagger con la documentación de la API
+    ─ package.json              # Dependencias y scripts de npm
+    ─ tsconfig.json             # Configuración de TypeScript
 ```
 
-## Compile and run the project
+## Instalación
 
-```bash
-# development
-$ npm run start
+### Requisitos Previos
 
-# watch mode
-$ npm run start:dev
+- Node.js v18+
+- PostgreSQL
 
-# production mode
-$ npm run start:prod
-```
+### Configuración del Entorno
 
-## Run tests
+1. Clonar el repositorio:
+    ```bash
+    git clone git@github.com:3FE3LE/stellar-backend.git
+    cd stellar-backend
+    ```
 
-```bash
-# unit tests
-$ npm run test
+2. Instalar las dependencias:
+    ```bash
+    npm install
+    ```
 
-# e2e tests
-$ npm run test:e2e
+3. Configurar la base de datos:
+   - Crear un archivo `.env` basado en `.env.example` y configurar la URL de la base de datos:
+     ```bash
+     DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+     ```
 
-# test coverage
-$ npm run test:cov
-```
+4. Ejecutar las migraciones para preparar la base de datos:
+    ```bash
+    npx prisma migrate dev
+    ```
 
-## Resources
+5. Sembrar la base de datos con datos iniciales:
+    ```bash
+    npx ts-node prisma/seed.ts
+    ```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Ejecución
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- Modo desarrollo:
+  ```bash
+  npm run start:dev
+  ```
 
-## Support
+- Modo producción:
+  ```bash
+  npm run build
+  npm run start:prod
+  ```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Documentación de la API
 
-## Stay in touch
+El servidor genera automáticamente un archivo `openapi.json` con la documentación de la API, que puedes importar en Postman o Swagger UI para explorar los endpoints.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Scripts Principales
 
-## License
+- **Iniciar en desarrollo**: `npm run start:dev`
+- **Construir para producción**: `npm run build`
+- **Iniciar en producción**: `npm run start:prod`
+- **Ejecutar pruebas**: `npm run test`
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Testing
+
+- **Pruebas unitarias**:
+  ```bash
+  npm run test
+  ```
+
+- **Pruebas e2e**:
+  ```bash
+  npm run test:e2e
+  ```
+
+## Dependencias
+
+- **NestJS** - Framework para la construcción de aplicaciones escalables.
+- **Prisma** - ORM para trabajar con PostgreSQL.
+- **Swagger** - Generación automática de la documentación de la API.
+- **RxJS** - Librería para manejar programación reactiva.
+
+## Notas Adicionales
+
+- Prisma está configurado para manejar las migraciones de esquema, y la base de datos se puede inicializar con datos utilizando el script `seed.ts`.
+- El archivo `openapi.json` se genera automáticamente cuando se levanta el servidor.
