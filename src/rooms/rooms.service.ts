@@ -1,3 +1,4 @@
+import { calculateTotalPrice } from 'src/helpers';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { Injectable } from '@nestjs/common';
@@ -44,36 +45,31 @@ export class RoomsService {
         reservations: true,
       },
     });
-
-    return availableRooms;
-  }
-
-  //service to track how many rooms are in the hotel and how many are available,both overall and by room type.
-  async findHotelInfo() {
-    const totalRooms = await this.prisma.room.count();
-    const availableRooms = await this.prisma.room.count({
+    const totalRooms = await this.prisma.room.count({
+      where: { type: roomType },
+    });
+    const reservedRooms = await this.prisma.room.count({
       where: {
+        type: roomType,
         reservations: {
-          none: {},
+          some: {
+            checkIn: { lt: checkOut },
+            checkOut: { gt: checkIn },
+          },
         },
       },
     });
-    const availableByType = await this.prisma.room.groupBy({
-      by: ['type'],
-      _count: {
-        type: true,
-      },
-      where: {
-        reservations: {
-          none: {},
-        },
-      },
-    });
-    return {
-      totalRooms,
-      availableRooms,
-      availableByType,
-    };
+    const availabilityPercentage =
+      ((totalRooms - reservedRooms) / totalRooms) * 100;
+
+    const priceIncrement = calculateTotalPrice(
+      1,
+      checkIn,
+      checkOut,
+      availabilityPercentage,
+    );
+
+    return { availableRooms, totalRooms, reservedRooms, priceIncrement };
   }
 
   async create(createRoomDto: CreateRoomDto) {

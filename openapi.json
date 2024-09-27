@@ -37,22 +37,6 @@
         ]
       }
     },
-    "/api/rooms/hotel": {
-      "get": {
-        "operationId": "RoomsController_findHotelInfo",
-        "summary": "Find hotel info",
-        "description": "Returns information about the hotel, including total rooms and available rooms",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Hotel information"
-          }
-        },
-        "tags": [
-          "Rooms"
-        ]
-      }
-    },
     "/api/rooms/available": {
       "get": {
         "operationId": "RoomsController_findAvailableRooms",

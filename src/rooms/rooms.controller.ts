@@ -31,17 +31,6 @@ export class RoomsController {
     return this.roomsService.findAll();
   }
 
-  @Get('hotel')
-  @ApiOperation({
-    summary: 'Find hotel info',
-    description:
-      'Returns information about the hotel, including total rooms and available rooms',
-  })
-  @ApiResponse({ status: 200, description: 'Hotel information' })
-  findHotelInfo() {
-    return this.roomsService.findHotelInfo();
-  }
-
   @Get('available')
   @ApiOperation({
     summary: 'Find available rooms',
