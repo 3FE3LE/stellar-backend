@@ -12,8 +12,8 @@ export class ReservationsService {
   async create(createReservationDto: CreateReservationDto) {
     const { checkIn, checkOut, guests, roomId } = createReservationDto;
 
-    const checkInDate = new Date(checkIn);
-    const checkOutDate = new Date(checkOut);
+    const checkInDate = new Date(new Date(checkIn).getDate() + 1);
+    const checkOutDate = new Date(new Date(checkOut).getDate() + 1);
 
     // Verificar si la habitación existe y tiene suficiente capacidad
     const room = await this.prisma.room.findUnique({

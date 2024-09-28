@@ -14,8 +14,8 @@ export class RoomsService {
 
     console.log(roomTypeId);
 
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
+    const checkIn = new Date(new Date(checkInDate).getDate() + 1);
+    const checkOut = new Date(new Date(checkOutDate).getDate() + 1);
 
     const availableRooms = await this.prisma.room.findMany({
       where: {
