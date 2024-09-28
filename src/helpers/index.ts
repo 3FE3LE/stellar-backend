@@ -13,20 +13,13 @@ export function calculateTotalPrice({
   checkOutDate,
   availabilityPercentage,
 }: PriceCalculationParams): number {
-  // Base rates per room type
-  const baseRates: Record<RoomType, number> = {
-    JUNIOR: 60,
-    KING: 90,
-    PRESIDENTIAL: 150,
-  };
-
-  const baseRate = baseRates[roomType];
+  const baseRate = roomType.basePrice;
   let totalPrice = 0;
 
   // Helper to check if a date is weekend
   const isWeekend = (date: Date): boolean => {
     const day = date.getDay(); // 0 = Sunday, 6 = Saturday
-    return day === 5 || day === 6;
+    return day === 0 || day === 6;
   };
 
   // Calculate number of days

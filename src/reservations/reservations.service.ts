@@ -33,11 +33,11 @@ export class ReservationsService {
 
     // Calcular el porcentaje de disponibilidad de la habitación
     const totalRooms = await this.prisma.room.count({
-      where: { type: room.type },
+      where: { typeId: room.typeId },
     });
     const reservedRooms = await this.prisma.room.count({
       where: {
-        type: room.type,
+        typeId: room.typeId,
         reservations: {
           some: {
             checkIn: { lt: checkOut },
@@ -50,9 +50,13 @@ export class ReservationsService {
     const availabilityPercentage =
       ((totalRooms - reservedRooms) / totalRooms) * 100;
 
+    const roomType = await this.prisma.roomType.findUnique({
+      where: { id: room.typeId },
+    });
+
     // Calcular el precio dinámico
     const totalPrice = calculateTotalPrice({
-      roomType: room.type,
+      roomType,
       checkInDate,
       checkOutDate,
       availabilityPercentage,

@@ -9,7 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RoomType } from '@prisma/client';
 
 import { CreateRoomDto } from './dto/create-room.dto';
 import { SearchRoomsDto } from './dto/search-room.dto';
@@ -55,9 +54,9 @@ export class RoomsController {
     description: 'Number of guests',
   })
   @ApiQuery({
-    name: 'roomType',
-    required: false,
-    enum: RoomType,
+    name: 'roomTypeId',
+    required: true,
+    type: Number,
     description: 'Type of room',
   })
   @ApiResponse({ status: 200, description: 'List of available rooms' })

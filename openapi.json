@@ -77,14 +77,19 @@
             "name": "roomType",
             "required": false,
             "in": "query",
+            "description": "Room type",
+            "schema": {
+              "example": "standard",
+              "type": "string"
+            }
+          },
+          {
+            "name": "roomTypeId",
+            "required": true,
+            "in": "query",
             "description": "Type of room",
             "schema": {
-              "enum": [
-                "JUNIOR",
-                "KING",
-                "PRESIDENTIAL"
-              ],
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -283,6 +288,198 @@
           "Reservations"
         ]
       }
+    },
+    "/api/rules": {
+      "post": {
+        "operationId": "RulesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRuleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "get": {
+        "operationId": "RulesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/rules/{id}": {
+      "get": {
+        "operationId": "RulesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "operationId": "RulesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRuleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RulesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/room-types": {
+      "post": {
+        "operationId": "RoomTypesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      },
+      "get": {
+        "operationId": "RoomTypesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/room-types/{id}": {
+      "get": {
+        "operationId": "RoomTypesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "operationId": "RoomTypesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoomTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RoomTypesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "info": {
@@ -298,10 +495,10 @@
       "CreateRoomDto": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "description": "Tipo de habitación (e.g. Junior Suite, King Suite, Presidential Suite)",
-            "example": "Junior Suite"
+          "typeId": {
+            "type": "number",
+            "description": "Identificador único del tipo de habitación, se genera automáticamente",
+            "example": "1"
           },
           "beds": {
             "type": "number",
@@ -325,7 +522,7 @@
           }
         },
         "required": [
-          "type",
+          "typeId",
           "beds",
           "maxOccupancy",
           "oceanView",
@@ -376,6 +573,22 @@
         ]
       },
       "UpdateReservationDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateRuleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateRuleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateRoomTypeDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateRoomTypeDto": {
         "type": "object",
         "properties": {}
       }

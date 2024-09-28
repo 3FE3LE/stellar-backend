@@ -1,16 +1,15 @@
-import { IsBoolean, IsInt, IsNumber, IsString, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNumber, Min } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { RoomType } from '@prisma/client';
 
 export class CreateRoomDto {
   @ApiProperty({
     description:
-      'Tipo de habitación (e.g. Junior Suite, King Suite, Presidential Suite)',
-    example: 'Junior Suite',
+      'Identificador único del tipo de habitación, se genera automáticamente',
+    example: '1',
   })
-  @IsString()
-  type: RoomType;
+  @IsNumber()
+  typeId: number;
 
   @ApiProperty({
     description: 'Número de camas en la habitación',
