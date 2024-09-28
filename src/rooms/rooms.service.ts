@@ -24,7 +24,7 @@ export class RoomsService {
           gte: Number(guests),
         },
         // Filtra por tipo de habitación, si se proporciona
-        typeId: roomTypeId ? Number(roomTypeId) : undefined,
+        typeId: roomTypeId && roomTypeId != 0 ? Number(roomTypeId) : undefined,
         // Excluye habitaciones que ya están reservadas en el período de fechas solicitado
         reservations: {
           none: {
@@ -47,11 +47,13 @@ export class RoomsService {
       },
     });
     const totalRooms = await this.prisma.room.count({
-      where: { typeId: roomTypeId ? Number(roomTypeId) : undefined },
+      where: {
+        typeId: roomTypeId && roomTypeId != 0 ? Number(roomTypeId) : undefined,
+      },
     });
     const reservedRooms = await this.prisma.room.count({
       where: {
-        typeId: roomTypeId ? Number(roomTypeId) : undefined,
+        typeId: roomTypeId && roomTypeId != 0 ? Number(roomTypeId) : undefined,
         reservations: {
           some: {
             checkIn: { lt: checkOut },
