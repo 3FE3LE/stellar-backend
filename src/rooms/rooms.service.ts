@@ -12,8 +12,6 @@ export class RoomsService {
   async findAvailableRooms(searchRoomsDto: SearchRoomsDto) {
     const { checkInDate, checkOutDate, guests, roomTypeId } = searchRoomsDto;
 
-    console.log(roomTypeId);
-
     const checkIn = new Date(new Date(checkInDate).getDate() + 1);
     const checkOut = new Date(new Date(checkOutDate).getDate() + 1);
 
