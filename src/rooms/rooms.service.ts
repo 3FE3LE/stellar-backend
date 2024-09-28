@@ -19,8 +19,6 @@ export class RoomsService {
     checkIn.setDate(checkIn.getDate() + 1);
     checkOut.setDate(checkOut.getDate() + 1);
 
-    console.log(checkIn, checkOut);
-
     const availableRooms = await this.prisma.room.findMany({
       where: {
         // Filtra habitaciones que tengan la capacidad suficiente para los huéspedes
