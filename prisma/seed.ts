@@ -63,12 +63,12 @@ async function main() {
       },
       {
         ruleType: 'RENTAL_DAYS_DISCOUNT_LVL1',
-        value: -4,
+        value: 4,
         description: 'Discount of $4 per day for 4-6 days rental.',
       },
       {
         ruleType: 'RENTAL_DAYS_DISCOUNT_LVL2',
-        value: -8,
+        value: 8,
         description: 'Discount of $8 per day for 7-9 days rental.',
       },
       {

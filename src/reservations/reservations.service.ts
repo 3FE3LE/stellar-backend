@@ -1,4 +1,4 @@
-import { calculateTotalPrice } from 'src/helpers';
+import { calculateTotalPrice, getRuleValues } from 'src/helpers';
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
@@ -57,12 +57,17 @@ export class ReservationsService {
       where: { id: room.typeId },
     });
 
+    const rules = await this.prisma.rule.findMany();
+
+    const pricingRules = getRuleValues(rules);
+
     // Calcular el precio dinámico
     const totalPrice = calculateTotalPrice({
       roomType,
       checkInDate,
       checkOutDate,
       availabilityPercentage,
+      rules: pricingRules,
     });
 
     // Crear la reserva

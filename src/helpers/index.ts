@@ -1,10 +1,21 @@
-import { RoomType } from '@prisma/client';
+import { RoomType, Rule, RuleType } from '@prisma/client';
 
+export const getRuleValues = (arr: Rule[]): Record<string, number> => {
+  return arr.reduce(
+    (acc, rule) => {
+      // Usamos RuleType[rule.ruleType] para obtener el nombre de la enum como clave
+      acc[RuleType[rule.ruleType]] = rule.value;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+};
 interface PriceCalculationParams {
   roomType: RoomType;
   checkInDate: Date;
   checkOutDate: Date;
   availabilityPercentage: number; // Availability as a percentage, e.g., 80 for 80%
+  rules: Record<RuleType, number>;
 }
 
 export function calculateTotalPrice({
@@ -12,6 +23,7 @@ export function calculateTotalPrice({
   checkInDate,
   checkOutDate,
   availabilityPercentage,
+  rules,
 }: PriceCalculationParams): number {
   const baseRate = roomType.basePrice;
   let totalPrice = 0;
@@ -35,7 +47,7 @@ export function calculateTotalPrice({
     let currentRate = baseRate;
 
     if (isWeekend(currentDate)) {
-      currentRate += currentRate * 0.25; // 25% increase on weekends
+      currentRate += currentRate * (rules.WEEKEND_INCREASE / 100); // 25% increase on weekends by default
     }
 
     totalPrice += currentRate;
@@ -43,9 +55,9 @@ export function calculateTotalPrice({
 
   // Apply rental days discount
   if (rentalDays >= 4 && rentalDays <= 6) {
-    totalPrice -= rentalDays * 4; // $4 per day discount
+    totalPrice -= rentalDays * rules.RENTAL_DAYS_DISCOUNT_LVL1; // $4 per day discount by default
   } else if (rentalDays >= 7 && rentalDays <= 9) {
-    totalPrice -= rentalDays * 8; // $8 per day discount
+    totalPrice -= rentalDays * rules.RENTAL_DAYS_DISCOUNT_LVL2; // $8 per day discount by default
   } else if (rentalDays >= 10) {
     totalPrice -= rentalDays * 12; // $12 per day discount
   }
@@ -54,11 +66,11 @@ export function calculateTotalPrice({
   if (availabilityPercentage < 20) {
     totalPrice += totalPrice * 0.15; // 15% increase
   } else if (availabilityPercentage >= 20 && availabilityPercentage < 40) {
-    totalPrice += totalPrice * 0.1; // 10% increase
+    totalPrice += totalPrice * (rules.AVAILABILITY_INCREASE_LVL3 / 100); // 10% increase by default
   } else if (availabilityPercentage >= 40 && availabilityPercentage < 60) {
-    totalPrice += totalPrice * 0.05; // 5% increase
+    totalPrice += totalPrice * (rules.AVAILABILITY_INCREASE_LVL2 / 100); // 5% increase by default
   } else if (availabilityPercentage >= 60 && availabilityPercentage < 80) {
-    totalPrice += totalPrice * 0.02; // 2% increase
+    totalPrice += totalPrice * (rules.AVAILABILITY_INCREASE_LVL1 / 100); // 2% increase by default
   }
 
   return Math.round(totalPrice * 100) / 100; // Round to two decimal places
