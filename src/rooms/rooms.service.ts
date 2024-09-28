@@ -10,7 +10,9 @@ export class RoomsService {
   constructor(@Inject('PRISMA_CLIENT') private readonly prisma: PrismaClient) {}
 
   async findAvailableRooms(searchRoomsDto: SearchRoomsDto) {
-    const { checkInDate, checkOutDate, guests, roomType } = searchRoomsDto;
+    const { checkInDate, checkOutDate, guests, roomTypeId } = searchRoomsDto;
+
+    console.log(roomTypeId);
 
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
@@ -22,7 +24,7 @@ export class RoomsService {
           gte: Number(guests),
         },
         // Filtra por tipo de habitación, si se proporciona
-        typeId: roomType ? roomType.id : undefined,
+        typeId: roomTypeId ? Number(roomTypeId) : undefined,
         // Excluye habitaciones que ya están reservadas en el período de fechas solicitado
         reservations: {
           none: {
@@ -45,11 +47,11 @@ export class RoomsService {
       },
     });
     const totalRooms = await this.prisma.room.count({
-      where: { typeId: roomType ? roomType.id : undefined },
+      where: { typeId: roomTypeId ? Number(roomTypeId) : undefined },
     });
     const reservedRooms = await this.prisma.room.count({
       where: {
-        typeId: roomType ? roomType.id : undefined,
+        typeId: roomTypeId ? Number(roomTypeId) : undefined,
         reservations: {
           some: {
             checkIn: { lt: checkOut },

@@ -1,7 +1,6 @@
 import { IsDateString, IsNumber, IsOptional } from 'class-validator';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { RoomType } from '@prisma/client';
 
 export class SearchRoomsDto {
   @ApiProperty({ description: 'Check-in date', example: '2023-09-25' })
@@ -17,11 +16,11 @@ export class SearchRoomsDto {
   guests: number;
 
   @ApiPropertyOptional({
-    description: 'Room type',
-    example: 'standard',
+    description: 'Type id of room',
+    example: '1',
     type: String,
   })
   @IsOptional()
   @IsNumber()
-  roomType?: RoomType;
+  roomTypeId?: number;
 }

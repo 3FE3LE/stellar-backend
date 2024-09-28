@@ -74,21 +74,12 @@
             }
           },
           {
-            "name": "roomType",
-            "required": false,
-            "in": "query",
-            "description": "Room type",
-            "schema": {
-              "example": "standard",
-              "type": "string"
-            }
-          },
-          {
             "name": "roomTypeId",
             "required": true,
             "in": "query",
             "description": "Type of room",
             "schema": {
+              "example": "1",
               "type": "number"
             }
           }
