@@ -75,11 +75,13 @@ export class ReservationsService {
 
     return newReservation;
   }
-
+  // get all reservations with room and room type
   findAll() {
     return this.prisma.reservation.findMany({
       include: {
-        room: true,
+        room: {
+          include: { type: true },
+        },
       },
     });
   }
