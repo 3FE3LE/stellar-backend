@@ -1,75 +1,93 @@
-import { PrismaClient, RoomType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Datos de habitaciones (Rooms)
-  const rooms = [
-    {
-      type: RoomType.JUNIOR,
-      beds: 2,
-      maxOccupancy: 4,
-      oceanView: true,
-      basePrice: 60.0,
+  // Buscar o crear Room Types
+  const juniorSuite = await prisma.roomType.create({
+    data: {
+      name: 'Junior Suite',
+      basePrice: 60,
+      description: 'A comfortable junior suite with basic amenities.',
     },
-    {
-      type: RoomType.KING,
-      beds: 1,
-      maxOccupancy: 2,
-      oceanView: false,
-      basePrice: 90.0,
-    },
-    {
-      type: RoomType.PRESIDENTIAL,
-      beds: 3,
-      maxOccupancy: 6,
-      oceanView: true,
-      basePrice: 150.0,
-    },
-  ];
+  });
 
-  // Crea las habitaciones en la base de datos
-  for (const room of rooms) {
-    await prisma.room.create({
-      data: room,
-    });
-  }
-
-  console.log('Habitaciones creadas.');
-
-  // Datos de reservas (Reservations)
-  const reservations = [
-    {
-      checkIn: new Date('2024-09-25'),
-      checkOut: new Date('2024-09-28'),
-      guests: 2,
-      roomId: 1, // ID de la habitación
-      totalPrice: 180.0, // Ejemplo de precio dinámico
+  const kingSuite = await prisma.roomType.create({
+    data: {
+      name: 'King Suite',
+      basePrice: 90,
+      description:
+        'A spacious suite with a king-sized bed and luxury amenities.',
     },
-    {
-      checkIn: new Date('2024-10-01'),
-      checkOut: new Date('2024-10-05'),
-      guests: 1,
-      roomId: 2,
-      totalPrice: 340.0,
-    },
-    {
-      checkIn: new Date('2024-11-12'),
-      checkOut: new Date('2024-11-14'),
-      guests: 4,
-      roomId: 3,
-      totalPrice: 300.0,
-    },
-  ];
+  });
 
-  // Crea las reservas en la base de datos
-  for (const reservation of reservations) {
-    await prisma.reservation.create({
-      data: reservation,
-    });
-  }
+  const presidentialSuite = await prisma.roomType.create({
+    data: {
+      name: 'Presidential Suite',
+      basePrice: 150,
+      description: 'The best suite with ocean view and all premium services.',
+    },
+  });
 
-  console.log('Reservas creadas.');
+  // Crear Rooms
+  await prisma.room.createMany({
+    data: [
+      {
+        typeId: juniorSuite.id,
+        beds: 1,
+        maxOccupancy: 2,
+        oceanView: false,
+      },
+      {
+        typeId: kingSuite.id,
+        beds: 1,
+        maxOccupancy: 3,
+        oceanView: true,
+      },
+      {
+        typeId: presidentialSuite.id,
+        beds: 2,
+        maxOccupancy: 4,
+        oceanView: true,
+      },
+    ],
+  });
+
+  // Crear Rules
+  await prisma.rule.createMany({
+    data: [
+      {
+        ruleType: 'WEEKEND_INCREASE',
+        value: 25,
+        description: 'Increase of 25% on weekends.',
+      },
+      {
+        ruleType: 'RENTAL_DAYS_DISCOUNT_LVL1',
+        value: -4,
+        description: 'Discount of $4 per day for 4-6 days rental.',
+      },
+      {
+        ruleType: 'RENTAL_DAYS_DISCOUNT_LVL2',
+        value: -8,
+        description: 'Discount of $8 per day for 7-9 days rental.',
+      },
+      {
+        ruleType: 'AVAILABILITY_INCREASE_LVL1',
+        value: 2,
+        description: 'Increase of 2% for 60%-79% availability.',
+      },
+      {
+        ruleType: 'AVAILABILITY_INCREASE_LVL2',
+        value: 5,
+        description: 'Increase of 5% for 40%-59% availability.',
+      },
+      {
+        ruleType: 'AVAILABILITY_INCREASE_LVL3',
+        value: 10,
+        description: 'Increase of 10% for 20%-39% availability.',
+      },
+    ],
+  });
 }
 
 main()
