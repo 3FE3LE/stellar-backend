@@ -17,6 +17,10 @@ Este es el backend de la aplicación Stellar, desarrollado con NestJS y Prisma O
             📁 dto              # DTOs de reservas
         📁 rooms                # Módulo de habitaciones
             📁 dto              # DTOs de habitaciones
+        📁 rules                # Módulo de reglas
+            📁 dto              # DTOs de reglas
+        📁 roomTypes            # Módulo de tipo de habitaciones
+            📁 dto              # DTOs de tipo de habitaciones
         ─ app.controller.ts     # Controlador principal
         ─ app.module.ts         # Módulo raíz
         ─ main.ts               # Punto de entrada
