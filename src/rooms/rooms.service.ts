@@ -12,8 +12,14 @@ export class RoomsService {
   async findAvailableRooms(searchRoomsDto: SearchRoomsDto) {
     const { checkInDate, checkOutDate, guests, roomTypeId } = searchRoomsDto;
 
-    const checkIn = new Date(new Date(checkInDate).getDate() + 1);
-    const checkOut = new Date(new Date(checkOutDate).getDate() + 1);
+    const checkIn = new Date(checkInDate);
+
+    const checkOut = new Date(checkOutDate);
+
+    checkIn.setDate(checkIn.getDate() + 1);
+    checkOut.setDate(checkOut.getDate() + 1);
+
+    console.log(checkIn, checkOut);
 
     const availableRooms = await this.prisma.room.findMany({
       where: {
